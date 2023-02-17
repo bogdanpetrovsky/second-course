@@ -88,11 +88,11 @@ void Solve()
         for (int j = 0; j < 4*N; j++)
         {
             if (i == j && i < 2*N) { kernelMatrix[i, j] = 0.5 * N * Kernel11(i * Math.PI/N, j * Math.PI/N) - 0.5 * i; }
-            if (i == j && i > 2*N) { kernelMatrix[i, j] = 0.5 * N * Kernel11(i * Math.PI/N, j * Math.PI/N) - 0.5 * i; }
+            if (i == j && i >= 2*N) { kernelMatrix[i, j] = 0.5 * N * Kernel11(i * Math.PI/N, j * Math.PI/N) - 0.5 * i; }
             if (i < 2*N && j < 2*N) { kernelMatrix[i, j] = Kernel11(i * Math.PI/N, j * Math.PI/N); }
-            if (i < 2*N && j > 2*N) { kernelMatrix[i, j] = Kernel12(i * Math.PI/N, j * Math.PI/N); }
-            if (i > 2*N && j < 2*N) { kernelMatrix[i, j] = Kernel21(i * Math.PI/N, j * Math.PI/N); }
-            if (i > 2*N && j > 2*N) { kernelMatrix[i, j] = Kernel22(i * Math.PI/N, j * Math.PI/N); }
+            if (i < 2*N && j >= 2*N) { kernelMatrix[i, j] = Kernel12(i * Math.PI/N, j * Math.PI/N); }
+            if (i >= 2*N && j < 2*N) { kernelMatrix[i, j] = Kernel21(i * Math.PI/N, j * Math.PI/N); }
+            if (i >= 2*N && j >= 2*N) { kernelMatrix[i, j] = Kernel22(i * Math.PI/N, j * Math.PI/N); }
         }
     
     for (int i = 0; i < 4 * N; i++)
