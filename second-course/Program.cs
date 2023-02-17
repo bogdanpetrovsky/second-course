@@ -5,6 +5,7 @@ double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
 double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
 double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
 double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
+
 double[] Vy(double t)
 {
     return new []
@@ -76,12 +77,40 @@ double GetEuclideanDistance(double x21, double x11, double x22, double x12)
     return Math.Sqrt(Math.Pow(x21 - x11, 2) + Math.Pow(x22 - x12, 2));
 }
 
-void NystromMethod(float n) { }
+void Solve()
+{
+    int N = 4;
+    double[] H_F_Values = new double [4*N];
+    double[,] kernelMatrix = new double [4*N, 4*N];
+    for (var i = 0; i < N * 4; i++) { H_F_Values[i] = i < 2 * N ? 0 : 1; }
 
-for (var n = 2; n <= 128; n *= 2)
-{ 
-    NystromMethod(n);
-    Console.WriteLine(n);
+    for (int i = 0; i < 4*N; i++)
+        for (int j = 0; j < 4*N; j++)
+        {
+            if (i == j && i < 2*N) { kernelMatrix[i, j] = 0.5 * N * Kernel11(i * Math.PI/N, j * Math.PI/N) - 0.5 * i; }
+            if (i == j && i > 2*N) { kernelMatrix[i, j] = 0.5 * N * Kernel11(i * Math.PI/N, j * Math.PI/N) - 0.5 * i; }
+            if (i < 2*N && j < 2*N) { kernelMatrix[i, j] = Kernel11(i * Math.PI/N, j * Math.PI/N); }
+            if (i < 2*N && j > 2*N) { kernelMatrix[i, j] = Kernel12(i * Math.PI/N, j * Math.PI/N); }
+            if (i > 2*N && j < 2*N) { kernelMatrix[i, j] = Kernel21(i * Math.PI/N, j * Math.PI/N); }
+            if (i > 2*N && j > 2*N) { kernelMatrix[i, j] = Kernel22(i * Math.PI/N, j * Math.PI/N); }
+        }
+    
+    for (int i = 0; i < 4 * N; i++)
+    {
+        for (int j = 0; j < 4 * N; j++)
+        {
+            Console.Write(kernelMatrix[i,j] + " ");
+        }
+        Console.WriteLine();
+    }
+    Console.WriteLine();
+    for (int j = 0; j < 4 * N; j++)
+    {
+        Console.Write(H_F_Values[j] + " ");
+    }
+    
+    // call Gauss
 }
 
-Console.WriteLine("Hello, World!");
+Solve();
+Console.WriteLine("\nEND");
