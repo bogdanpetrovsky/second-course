@@ -78,6 +78,55 @@ double GetEuclideanDistance(double x21, double x11, double x22, double x12)
     return Math.Sqrt(Math.Pow(x21 - x11, 2) + Math.Pow(x22 - x12, 2));
 }
 
+double[] Gauss (double[,] a, int N) {
+    int n = N;
+    int m = N;
+ 
+    int[] where = new int[m];
+    for (int i=0; i<m; i++) { where[i] = -1; }
+    
+    for (int col=0, row=0; col<m && row<n; ++col) {
+        int sel = row;
+        for (int i=row; i<n; ++i)
+            if (Math.Abs(a[i, col]) > Math.Abs(a[sel, col]))
+                sel = i;
+        if (Math.Abs (a[sel, col]) < Eps)
+            continue;
+        for (int i = col; i <= m; ++i)
+            (a[sel, i], a[row, i]) = (a[row, i], a[sel, i]);
+        where[col] = row;
+ 
+        for (int i=0; i<n; ++i)
+            if (i != row) {
+                double c = a[i, col] / a[row, col];
+                for (int j=col; j<=m; ++j)
+                    a[i, j] -= a[row, j] * c;
+            }
+        ++row;
+    }
+    
+    // for (int i = 0; i < m; i++) { Console.Write(where[i] + " "); } Console.WriteLine();
+    
+    double[] ans = new double[m];
+    for (int i=0; i<m; i++) { ans[i] = 0; }
+    
+    for (int i=0; i<m; ++i)
+        if (where[i] != -1)
+            ans[i] = a[where[i], m] / a[where[i], i];
+    for (int i=0; i<n; ++i) {
+        double sum = 0;
+        for (int j=0; j<m; ++j)
+            sum += ans[j] * a[i, j];
+        if (Math.Abs(sum - a[i, m]) > Eps)
+            return new double[] { };;
+    }
+ 
+    for (int i=0; i<m; ++i)
+        if (where[i] == -1)
+            return new double[] { };
+    return ans;
+}
+
 void Solve()
 {
     int N = 4;
@@ -99,21 +148,15 @@ void Solve()
         kernelMatrix[2*N + i, 2*N + i] = kernelMatrix[2*N + i, 2*N + i] / (2*N) - 0.5;
     }
 
-    for (int i = 0; i < 4 * N; i++)
-    {
-        for (int j = 0; j < 4 * N; j++)
-        {
-            Console.Write(kernelMatrix[i,j] + " ");
-        }
-        Console.WriteLine();
-    }
-    Console.WriteLine();
-    for (int j = 0; j < 4 * N; j++)
-    {
-        Console.Write(H_F_Values[j] + " ");
-    }
+    double[,] kernelMatrixExtended = new double[4*N, 4*N + 1];
+    for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N] = H_F_Values[i]; }
+    for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
     
-    // call Gauss
+    // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write(kernelMatrixExtended[i,j] + " "); } Console.WriteLine(); } Console.WriteLine();
+    // double[,] testCase = new double[2, 3] { { 1, 2, 3 }, { 4, 5, 6 } }; double[] ans = Gauss(testCase, 2); for (int j = 0; j < 2; j++) { Console.Write(ans[j] + " "); }
+    
+    double[] ans = Gauss(kernelMatrixExtended, 4 * N);
+    for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
 }
 
 Solve();
