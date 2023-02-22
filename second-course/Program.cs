@@ -133,8 +133,8 @@ double GetApproximatedU(double x1, double x2, double[] uValues, double N)
     for (int i = 0; i < 2*N; i++)
     {
         double t = i * Math.PI / N;
-        s1 += uValues[i] * Math.Log(1 / GetEuclideanDistance(x1, X1(t)[0], x2, X1(t)[1])) * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0);
-        s2 += uValues[i] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
+        s1 = s1 + uValues[i] * Math.Log(1 / GetEuclideanDistance(x1, X1(t)[0], x2, X1(t)[1])) * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0);
+        s2 = s2 + uValues[i] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
               (((x1 - X2(t)[0]) * VGamma2(t)[0] + (x2 - X2(t)[1]) * VGamma2(t)[1]) / Math.Pow(GetEuclideanDistance(x1, X2(t)[0], x2, X2(t)[1]), 2));
     }
 
