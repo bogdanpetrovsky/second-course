@@ -127,14 +127,14 @@ double[] Gauss (double[,] a, int N) {
     return ans;
 }
 
-double GetApproximatedU(double x1, double x2, double[] uValues, double N)
+double GetApproximatedU(double x1, double x2, double[] uValues, int N)
 {
     double s1 = 0, s2 = 0;
     for (int i = 0; i < 2*N; i++)
     {
         double t = i * Math.PI / N;
         s1 = s1 + uValues[i] * Math.Log(1 / GetEuclideanDistance(x1, X1(t)[0], x2, X1(t)[1])) * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0);
-        s2 = s2 + uValues[i] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
+        s2 = s2 + uValues[i+2*N] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
               (((x1 - X2(t)[0]) * VGamma2(t)[0] + (x2 - X2(t)[1]) * VGamma2(t)[1]) / Math.Pow(GetEuclideanDistance(x1, X2(t)[0], x2, X2(t)[1]), 2));
     }
 
@@ -174,7 +174,7 @@ void Solve(int N1)
     for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
     Console.WriteLine("\n");
     
-    Console.WriteLine("~U Value: " + GetApproximatedU(0, 0, ans, N));
+    Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 1.5, ans, N));
 }
 
 Solve(4);
