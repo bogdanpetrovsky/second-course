@@ -29,7 +29,7 @@ double Kernel11(double t1, double t2)
     if (Math.Abs(t1 - t2) < Eps)
     {
         return (-1 * Der1X1(t1)[0] * Der2X1(t1)[1] + Der1X1(t1)[1] * Der2X1(t1)[0]) /
-               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 3));
+               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2));
     }
 
     double kernelNumerator = (-X1(t1)[0] + X1(t2)[0]) * VGamma1(t1)[0] + (-X1(t1)[1] + X1(t2)[1]) * VGamma1(t1)[1];
@@ -63,7 +63,7 @@ double Kernel22(double t1, double t2)
     if (Math.Abs(t1 - t2) < Eps)
     {
         return (-1 * Der1X2(t1)[0] * Der2X2(t1)[1] + Der1X2(t1)[1] * Der2X2(t1)[0]) /
-               (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 3));
+               (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 2));
     }
 
     double kernelNumerator = (X2(t1)[0] - X2(t2)[0]) * VGamma2(t2)[0] + (X2(t1)[1] - X2(t2)[1]) * VGamma2(t2)[1];
@@ -150,12 +150,14 @@ void Solve(int N1)
 
     for (int i = 0; i < 2*N; i++)
     {
+        double ti = i * Math.PI / N;
         for (int j = 0; j < 2*N; j++)
         {
-            kernelMatrix[i, j] = Kernel11(i * Math.PI/(2*N), j * Math.PI/(2*N))/(2*N);
-            kernelMatrix[i, 2*N + j] = Kernel12(i * Math.PI/(2*N), 2*N*j * Math.PI/(2*N))/(2*N);
-            kernelMatrix[2*N + i, j] = Kernel21(2*N*i * Math.PI/(2*N), j * Math.PI/(2*N))/(2*N);
-            kernelMatrix[2*N + i, 2*N + j] = Kernel22(2*N*i * Math.PI/(2*N), 2*N*j * Math.PI/(2*N))/(2*N);
+            double tj = j * Math.PI / N;
+            kernelMatrix[i, j] = Kernel11(ti, tj)/(2*N);
+            kernelMatrix[i, 2*N + j] = Kernel12(ti, tj)/(2*N);
+            kernelMatrix[2*N + i, j] = Kernel21(ti, tj)/(2*N);
+            kernelMatrix[2*N + i, 2*N + j] = Kernel22(ti, tj)/(2*N);
         }
 
         kernelMatrix[i, i] = kernelMatrix[i, i] - 0.5;
