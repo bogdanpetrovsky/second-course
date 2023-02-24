@@ -29,10 +29,10 @@ double Kernel11(double t1, double t2)
     if (Math.Abs(t1 - t2) < Eps)
     {
         return (-1 * Der1X1(t1)[0] * Der2X1(t1)[1] + Der1X1(t1)[1] * Der2X1(t1)[0]) /
-               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2));
+               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 3));
     }
 
-    double kernelNumerator = (X1(t1)[0] - X1(t2)[0]) * VGamma1(t1)[0] + (X1(t1)[1] - X1(t2)[1]) * VGamma1(t1)[1];
+    double kernelNumerator = (-X1(t1)[0] + X1(t2)[0]) * VGamma1(t1)[0] + (-X1(t1)[1] + X1(t2)[1]) * VGamma1(t1)[1];
     double kernelDenominator = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
     
     return kernelNumerator * GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0) /
@@ -42,9 +42,9 @@ double Kernel11(double t1, double t2)
 double Kernel12(double t1, double t2)
 {
     double kernelLeftValue = (VGamma2(t2)[0] * VGamma1(t1)[0] + VGamma2(t2)[1] * VGamma1(t1)[1]) /
-                             GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]);
-    double kernelRightValueNominator = (X1(t1)[0] - X2(t2)[0] * VGamma1(t2)[0] + X1(t1)[1] - X2(t2)[1] * VGamma1(t2)[1]) *
-                                       (X1(t1)[0] - X2(t2)[0] * VGamma1(t1)[0] + X1(t1)[1] - X2(t2)[1] * VGamma1(t1)[1]);
+                             Math.Pow(GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]), 2);
+    double kernelRightValueNominator = ((X1(t1)[0] - X2(t2)[0]) * VGamma2(t2)[0] + (X1(t1)[1] - X2(t2)[1]) * VGamma2(t2)[1]) *
+                                       ((X1(t1)[0] - X2(t2)[0]) * VGamma1(t1)[0] + (X1(t1)[1] - X2(t2)[1]) * VGamma1(t1)[1]);
     double kernelRightValue = kernelRightValueNominator / 
                               Math.Pow(GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]), 4);
     
@@ -63,7 +63,7 @@ double Kernel22(double t1, double t2)
     if (Math.Abs(t1 - t2) < Eps)
     {
         return (-1 * Der1X2(t1)[0] * Der2X2(t1)[1] + Der1X2(t1)[1] * Der2X2(t1)[0]) /
-               (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 2));
+               (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 3));
     }
 
     double kernelNumerator = (X2(t1)[0] - X2(t2)[0]) * VGamma2(t2)[0] + (X2(t1)[1] - X2(t2)[1]) * VGamma2(t2)[1];
@@ -171,14 +171,18 @@ void Solve(int N1)
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
     Console.WriteLine("Gauss Values:");
-    for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
+    // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
     Console.WriteLine("\n");
     
     Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 1.5, ans, N));
 }
 
 Solve(4);
-// Console.WriteLine();
-// Solve(8);
+Console.WriteLine();
+Solve(8);
+Console.WriteLine();
+Solve(16);
+Console.WriteLine();
+Solve(32);
 
 Console.WriteLine("\nEND");
