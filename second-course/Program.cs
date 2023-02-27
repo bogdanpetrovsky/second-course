@@ -62,7 +62,7 @@ double Kernel22(double t1, double t2)
 {
     if (Math.Abs(t1 - t2) < Eps)
     {
-        return (-1 * Der1X2(t1)[0] * Der2X2(t1)[1] + Der1X2(t1)[1] * Der2X2(t1)[0]) /
+        return (Der1X2(t1)[0] * Der2X2(t1)[1] - Der1X2(t1)[1] * Der2X2(t1)[0]) /
                (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 2));
     }
 
@@ -169,7 +169,7 @@ void Solve(int N1)
     for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
     
     // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write(kernelMatrixExtended[i,j] + " "); } Console.WriteLine(); } Console.WriteLine();
-    // double[,] testCase = new double[2, 3] { { 1, 2, 3 }, { 4, 5, 6 } }; double[] ans = Gauss(testCase, 2); for (int j = 0; j < 2; j++) { Console.Write(ans[j] + " "); }
+    double[,] testCase = new double[3, 3] { { 1, 2, 3 }, { 4, 5, 6 }, {-1, 2, 0} }; double[] ans1 = Gauss(testCase, 2); for (int j = 0; j < 2; j++) { Console.Write(ans1[j] + " "); }
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
     Console.WriteLine("Gauss Values:");
