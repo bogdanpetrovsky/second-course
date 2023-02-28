@@ -169,10 +169,10 @@ void Solve(int N1)
     for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
     
     // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write(kernelMatrixExtended[i,j] + " "); } Console.WriteLine(); } Console.WriteLine();
-    double[,] testCase = new double[3, 3] { { 1, 2, 3 }, { 4, 5, 6 }, {-1, 2, 0} }; double[] ans1 = Gauss(testCase, 2); for (int j = 0; j < 2; j++) { Console.Write(ans1[j] + " "); }
+    // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
-    Console.WriteLine("Gauss Values:");
+    // Console.WriteLine("Gauss Values:");
     // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
     Console.WriteLine("\n");
     
