@@ -11,16 +11,16 @@ double[] VGamma2(double t)
 {
     return new []
     {
-        Der1X2(t)[1] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0),
-        -1 * Der1X2(t)[0] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0)
+        X2(t)[1] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0),
+        -1 * X2(t)[0] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0)
     };
 }
 double[] VGamma1(double t)
 {
     return new []
     {
-        Der1X1(t)[1] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0),
-        -1 * Der1X1(t)[0] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0)
+        X1(t)[1] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0),
+        -1 * X1(t)[0] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0)
     };
 }
 
@@ -28,14 +28,14 @@ double Kernel11(double t1, double t2)
 {
     if (Math.Abs(t1 - t2) < Eps)
     {
-        return (-1 * Der1X1(t1)[0] * Der2X1(t1)[1] + Der1X1(t1)[1] * Der2X1(t1)[0]) /
+        return (Der2X1(t1)[0] * Der1X1(t1)[1] - Der2X1(t1)[1] * Der1X1(t1)[0]) /
                (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2));
     }
 
-    double kernelNumerator = (-X1(t1)[0] + X1(t2)[0]) * VGamma1(t1)[0] + (-X1(t1)[1] + X1(t2)[1]) * VGamma1(t1)[1];
+    double kernelNumerator = (X1(t2)[0] - X1(t1)[0]) * VGamma1(t1)[0] + (X1(t2)[1] + X1(t2)[1]) * VGamma1(t1)[1];
     double kernelDenominator = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
     
-    return kernelNumerator * GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0) /
+    return kernelNumerator * GetEuclideanDistance(Der1X1(t2)[0], 0, Der1X1(t2)[1], 0) /
            kernelDenominator;
 }
 
@@ -62,7 +62,7 @@ double Kernel22(double t1, double t2)
 {
     if (Math.Abs(t1 - t2) < Eps)
     {
-        return (Der1X2(t1)[0] * Der2X2(t1)[1] - Der1X2(t1)[1] * Der2X2(t1)[0]) /
+        return (-1 * Der1X2(t1)[0] * Der2X2(t1)[1] + Der1X2(t1)[1] * Der2X2(t1)[0]) /
                (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 2));
     }
 
@@ -176,7 +176,7 @@ void Solve(int N1)
     // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
     Console.WriteLine("\n");
     
-    Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 1.5, ans, N));
+    Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 0, ans, N));
 }
 
 Solve(4);
