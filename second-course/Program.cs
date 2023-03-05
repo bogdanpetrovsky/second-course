@@ -1,11 +1,14 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using System.Globalization;
+NumberFormatInfo setPrecision = new NumberFormatInfo();    
+setPrecision.NumberDecimalDigits = 5;    
+// See https://aka.ms/new-console-template for more information
 double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
 double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
 double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
 double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
 double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
 double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
-double Eps = 0.00000001;
+double Eps = 0.000001;
 
 double[] VGamma2(double t)
 {
@@ -168,12 +171,13 @@ void Solve(int N1)
     for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N] = H_F_Values[i]; }
     for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
     
-    // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write(kernelMatrixExtended[i,j] + " "); } Console.WriteLine(); } Console.WriteLine();
+    // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
     // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
-    // Console.WriteLine("Gauss Values:");
-    // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
+    Console.WriteLine("Gauss Values:");
+    for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j].ToString("N", setPrecision) + " ");
+    }
     Console.WriteLine("\n");
     
     Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 0, ans, N));
