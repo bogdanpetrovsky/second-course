@@ -14,16 +14,16 @@ double[] VGamma2(double t)
 {
     return new []
     {
-        X2(t)[1] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0),
-        -1 * X2(t)[0] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0)
+        Der1X2(t)[1] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0),
+        -1 * Der1X2(t)[0] / GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0)
     };
 }
 double[] VGamma1(double t)
 {
     return new []
     {
-        X1(t)[1] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0),
-        -1 * X1(t)[0] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0)
+        Der1X1(t)[1] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0),
+        -1 * Der1X1(t)[0] / GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0)
     };
 }
 
@@ -35,7 +35,7 @@ double Kernel11(double t1, double t2)
                (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2));
     }
 
-    double kernelNumerator = (X1(t2)[0] - X1(t1)[0]) * VGamma1(t1)[0] + (X1(t2)[1] + X1(t2)[1]) * VGamma1(t1)[1];
+    double kernelNumerator = (X1(t2)[0] - X1(t1)[0]) * VGamma1(t1)[0] + (X1(t2)[1] - X1(t1)[1]) * VGamma1(t1)[1];
     double kernelDenominator = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
     
     return kernelNumerator * GetEuclideanDistance(Der1X1(t2)[0], 0, Der1X1(t2)[1], 0) /
@@ -44,7 +44,7 @@ double Kernel11(double t1, double t2)
 
 double Kernel12(double t1, double t2)
 {
-    double kernelLeftValue = (VGamma2(t2)[0] * VGamma1(t1)[0] + VGamma2(t2)[1] * VGamma1(t1)[1]) /
+    double kernelLeftValue = (VGamma1(t1)[0] * VGamma2(t2)[0] + VGamma1(t1)[1] * VGamma2(t2)[1]) /
                              Math.Pow(GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]), 2);
     double kernelRightValueNominator = ((X1(t1)[0] - X2(t2)[0]) * VGamma2(t2)[0] + (X1(t1)[1] - X2(t2)[1]) * VGamma2(t2)[1]) *
                                        ((X1(t1)[0] - X2(t2)[0]) * VGamma1(t1)[0] + (X1(t1)[1] - X2(t2)[1]) * VGamma1(t1)[1]);
@@ -171,7 +171,7 @@ void Solve(int N1)
     for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N] = H_F_Values[i]; }
     for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
     
-    // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
+    for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
     // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
@@ -180,7 +180,7 @@ void Solve(int N1)
     }
     Console.WriteLine("\n");
     
-    Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 0, ans, N));
+    Console.WriteLine("~U Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
 }
 
 Solve(4);
