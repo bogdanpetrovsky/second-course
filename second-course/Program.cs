@@ -8,6 +8,12 @@ double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
 double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
 double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
 double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
+// double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
+// double[] X2(double t) { return new [] { 2 * Math.Cos(t), Math.Sin(t) }; }
+// double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
+// double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), Math.Cos(t) }; }
+// double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
+// double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -1 * Math.Sin(t) }; }
 double Eps = 0.000001;
 
 double[] VGamma2(double t)
@@ -230,7 +236,8 @@ void Solve(int N1)
     }
     Console.WriteLine("\n");
     
-    Console.WriteLine("~U Value: " + GetApproximatedU(0, 1.5, ans, N).ToString("N", setPrecision) + " ");
+    Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
+    Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
 }
 
 Solve(4);
