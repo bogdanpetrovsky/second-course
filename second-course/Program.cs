@@ -137,6 +137,19 @@ double GetEuclideanDistance(double x21, double x11, double x22, double x12)
     return Math.Sqrt(Math.Pow(x21 - x11, 2) + Math.Pow(x22 - x12, 2));
 }
 
+double Rj(double t, double tj, double n)
+{
+    double result = 0;
+    
+    for (int m = 1; m < n; m++)
+    {
+        result += 1.0 / m * Math.Cos(m * (t - tj)) + 1 / (2 * n) * Math.Cos(n * (t - tj));
+
+    }
+
+    return - result / n;
+}
+
 double[] Gauss (double[,] a, int N) {
     int n = N;
     int m = N;
@@ -200,6 +213,38 @@ double GetApproximatedU(double x1, double x2, double[] uValues, int N)
     return s1 / (2 * N) + s2 / (2 * N);
 }
 
+double[] GetApproximatedUOnGamma1(double[] uValues, int N)
+{
+    double[] result = new double[2*N];
+    
+    for (int k = 0; k < 2*N - 1; k++)
+    {
+        double tk = k * Math.PI / N;
+        double s1 = 0, s2 = 0;
+        for (int i = 0; i < 2*N; i++)
+        {
+            double t = i * Math.PI / N;
+            s2 = s2 + uValues[i+2*N] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
+                (((tk - X2(t)[0]) * VGamma2(t)[0] + (t - X2(t)[1]) * VGamma2(t)[1]) / Math.Pow(GetEuclideanDistance(tk, X2(t)[0], t, X2(t)[1]), 2));
+
+            if (t - tk > Eps)
+            {
+                s1 = s1 + uValues[i] * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0) * Rj(t,tk, N);
+            }
+            else
+            {
+                s1 = s1 + uValues[i] * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0) *
+                    Math.Log(Math.Pow(GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0), 2));
+            }
+        }
+
+        result[k] = s1 / (2 * N) + s2 / (2 * N);
+    }
+
+
+    return result;
+}
+
 void Solve(int N1)
 {
     int N = N1;
@@ -227,17 +272,19 @@ void Solve(int N1)
     for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N] = H_F_Values[i]; }
     for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
     
-    for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
+    // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
     // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
-    Console.WriteLine("Gauss Values:");
-    for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j].ToString("N", setPrecision) + " ");
-    }
-    Console.WriteLine("\n");
+    // Console.WriteLine("Gauss Values:");
+    // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j].ToString("N", setPrecision) + " "); }
+    // Console.WriteLine("\n");
     
     Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
     Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
+
+    double[] uOnGamma1 = GetApproximatedUOnGamma1(ans, N);
+    for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
 }
 
 Solve(4);
