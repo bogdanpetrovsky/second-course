@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 NumberFormatInfo setPrecision = new NumberFormatInfo();    
-setPrecision.NumberDecimalDigits = 5;    
+setPrecision.NumberDecimalDigits = 8;    
 // See https://aka.ms/new-console-template for more information
 double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
 double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
@@ -217,28 +217,30 @@ double[] GetApproximatedUOnGamma1(double[] uValues, int N)
 {
     double[] result = new double[2*N];
     
-    for (int k = 0; k < 2*N - 1; k++)
+    for (int k = 0; k < 2*N; k++)
     {
         double tk = k * Math.PI / N;
         double s1 = 0, s2 = 0;
         for (int i = 0; i < 2*N; i++)
         {
-            double t = i * Math.PI / N;
-            s2 = s2 + uValues[i+2*N] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
-                (((tk - X2(t)[0]) * VGamma2(t)[0] + (t - X2(t)[1]) * VGamma2(t)[1]) / Math.Pow(GetEuclideanDistance(tk, X2(t)[0], t, X2(t)[1]), 2));
+            double ti = i * Math.PI / N;
+            s2 = s2 + uValues[i+2*N] * GetEuclideanDistance(Der1X2(ti)[0], 0, Der1X2(ti)[1], 0) *
+                ((X1(tk)[0] - X2(ti)[0]) * VGamma2(ti)[0] + (X1(tk)[1] - X2(ti)[1]) * VGamma2(ti)[1]) / Math.Pow(GetEuclideanDistance(X1(tk)[0], X2(ti)[0], X1(tk)[1], X2(ti)[1]), 2);
 
-            if (t - tk > Eps)
+            double l = 0;
+            if (Math.Abs(ti - tk) < Eps)
             {
-                s1 = s1 + uValues[i] * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0) * Rj(t,tk, N);
+                l = Math.Log(Math.Pow(GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0), 2));
             }
             else
             {
-                s1 = s1 + uValues[i] * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0) *
-                    Math.Log(Math.Pow(GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0), 2));
+                l = Math.Log(Math.Pow(GetEuclideanDistance(X1(tk)[0], X1(ti)[0], X1(tk)[1], X1(ti)[1]), 2) / (4 * Math.Pow(Math.Sin((tk - ti)/2), 2)));
             }
+
+            s1 = s1 + uValues[i] * GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0) * (-l/(4*N) - Rj(ti,tk, N)/2);
         }
 
-        result[k] = s1 / (2 * N) + s2 / (2 * N);
+        result[k] = s1 + s2 / (2 * N);
     }
 
 
@@ -287,12 +289,12 @@ void Solve(int N1)
     for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
 }
 
-Solve(4);
-Console.WriteLine();
-Solve(8);
-Console.WriteLine();
+// Solve(4);
+// Console.WriteLine();
+// Solve(8);
+// Console.WriteLine();
 Solve(16);
 Console.WriteLine();
-Solve(32);
+// Solve(32);
 
 Console.WriteLine("\nEND");
