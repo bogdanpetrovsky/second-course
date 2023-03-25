@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 NumberFormatInfo setPrecision = new NumberFormatInfo();    
-setPrecision.NumberDecimalDigits = 8;    
+setPrecision.NumberDecimalDigits = 8;
 // See https://aka.ms/new-console-template for more information
 double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
 double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
@@ -86,48 +86,48 @@ double H11(double t1, double t2)
 {
     if (Math.Abs(t1 - t2) < Eps)
     {
-        return (-1 * Der1X2(t1)[0] * Der2X2(t1)[1] + Der1X2(t1)[1] * Der2X2(t1)[0]) /
-               (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 2));
+        return (-1 * Der1X1(t1)[0] * Der2X1(t1)[1] + Der1X1(t1)[1] * Der2X1(t1)[0]) /
+               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2));
     }
 
-    double kernelNumerator = (X2(t1)[0] - X2(t2)[0]) * VGamma2(t2)[0] + (X2(t1)[1] - X2(t2)[1]) * VGamma2(t2)[1];
-    double kernelDenominator = Math.Pow(GetEuclideanDistance(X2(t1)[0], X2(t2)[0], X2(t1)[1], X2(t2)[1]), 2);
+    double kernelNumerator = (X1(t1)[0] - X1(t2)[0]) * VGamma1(t2)[0] + (X1(t1)[1] - X1(t2)[1]) * VGamma1(t2)[1];
+    double kernelDenominator = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
     
-    return kernelNumerator * GetEuclideanDistance(Der1X2(t2)[0], 0, Der1X2(t2)[1], 0) /
+    return kernelNumerator * GetEuclideanDistance(Der1X1(t2)[0], 0, Der1X1(t2)[1], 0) /
            kernelDenominator;
 }
 
 double H12(double t1, double t2)
 {
-    double kernelLeftValue = Math.Log(1 / GetEuclideanDistance(X2(t1)[0], X1(t2)[0], X2(t1)[1], X1(t2)[1]));
+    double kernelLeftValue = Math.Log(1 / GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]));
     double kernelRightValue = GetEuclideanDistance(Der1X2(t2)[0], 0, Der1X2(t2)[1], 0);
     return kernelLeftValue * kernelRightValue;
 }
 
 double H21(double t1, double t2)
 {
-    double kernelLeftValue = (VGamma1(t1)[0] * VGamma2(t2)[0] + VGamma1(t1)[1] * VGamma2(t2)[1]) /
-                             Math.Pow(GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]), 2);
-    double kernelRightValueNominator = ((X1(t1)[0] - X2(t2)[0]) * VGamma2(t2)[0] + (X1(t1)[1] - X2(t2)[1]) * VGamma2(t2)[1]) *
-                                       ((X1(t1)[0] - X2(t2)[0]) * VGamma1(t1)[0] + (X1(t1)[1] - X2(t2)[1]) * VGamma1(t1)[1]);
+    double kernelLeftValue = (VGamma2(t1)[0] * VGamma1(t2)[0] + VGamma2(t1)[1] * VGamma1(t2)[1]) /
+                             Math.Pow(GetEuclideanDistance(X2(t1)[0], X1(t2)[0], X2(t1)[1], X1(t2)[1]), 2);
+    double kernelRightValueNominator = ((X2(t1)[0] - X1(t2)[0]) * VGamma1(t2)[0] + (X2(t1)[1] - X1(t2)[1]) * VGamma1(t2)[1]) *
+                                       ((X2(t1)[0] - X1(t2)[0]) * VGamma2(t1)[0] + (X2(t1)[1] - X1(t2)[1]) * VGamma2(t1)[1]);
     double kernelRightValue = kernelRightValueNominator / 
-                              Math.Pow(GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]), 4);
+                              Math.Pow(GetEuclideanDistance(X2(t1)[0], X1(t2)[0], X2(t1)[1], X1(t2)[1]), 4);
     
-    return (kernelLeftValue - 2 * kernelRightValue) * GetEuclideanDistance(Der1X2(t2)[0], 0, Der1X2(t2)[1], 0); 
+    return (kernelLeftValue - 2 * kernelRightValue) * GetEuclideanDistance(Der1X1(t2)[0], 0, Der1X1(t2)[1], 0); 
 }
 
 double H22(double t1, double t2)
 {
     if (Math.Abs(t1 - t2) < Eps)
     {
-        return (Der2X1(t1)[0] * Der1X1(t1)[1] - Der2X1(t1)[1] * Der1X1(t1)[0]) /
-               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2));
+        return (Der2X2(t1)[0] * Der1X2(t1)[1] - Der2X2(t1)[1] * Der1X2(t1)[0]) /
+               (2 * Math.Pow(GetEuclideanDistance(Der1X2(t1)[0], 0, Der1X2(t1)[1], 0), 2));
     }
 
-    double kernelNumerator = (X1(t2)[0] - X1(t1)[0]) * VGamma1(t1)[0] + (X1(t2)[1] - X1(t1)[1]) * VGamma1(t1)[1];
-    double kernelDenominator = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
+    double kernelNumerator = (X2(t2)[0] - X2(t1)[0]) * VGamma2(t1)[0] + (X2(t2)[1] - X2(t1)[1]) * VGamma2(t1)[1];
+    double kernelDenominator = Math.Pow(GetEuclideanDistance(X2(t1)[0], X2(t2)[0], X2(t1)[1], X2(t2)[1]), 2);
     
-    return kernelNumerator * GetEuclideanDistance(Der1X1(t2)[0], 0, Der1X1(t2)[1], 0) /
+    return kernelNumerator * GetEuclideanDistance(Der1X2(t2)[0], 0, Der1X2(t2)[1], 0) /
            kernelDenominator;
 }
 
@@ -205,9 +205,13 @@ double GetApproximatedU(double x1, double x2, double[] uValues, int N)
     for (int i = 0; i < 2*N; i++)
     {
         double t = i * Math.PI / N;
-        s1 = s1 + uValues[i] * Math.Log(1 / GetEuclideanDistance(x1, X1(t)[0], x2, X1(t)[1])) * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0);
-        s2 = s2 + uValues[i+2*N] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
-              (((x1 - X2(t)[0]) * VGamma2(t)[0] + (x2 - X2(t)[1]) * VGamma2(t)[1]) / Math.Pow(GetEuclideanDistance(x1, X2(t)[0], x2, X2(t)[1]), 2));
+        // s1 = s1 + uValues[i] * Math.Log(1 / GetEuclideanDistance(x1, X1(t)[0], x2, X1(t)[1])) * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0);
+        // s2 = s2 + uValues[i+2*N] * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0) *
+        //       (((x1 - X2(t)[0]) * VGamma2(t)[0] + (x2 - X2(t)[1]) * VGamma2(t)[1]) / Math.Pow(GetEuclideanDistance(x1, X2(t)[0], x2, X2(t)[1]), 2));
+        s1 = s1 + uValues[i] * GetEuclideanDistance(Der1X1(t)[0], 0, Der1X1(t)[1], 0) *
+            (((x1 - X1(t)[0]) * VGamma1(t)[0] + (x2 - X1(t)[1]) * VGamma1(t)[1]) / Math.Pow(GetEuclideanDistance(x1, X1(t)[0], x2, X1(t)[1]), 2));
+        s2 = s2 + uValues[i+2*N] * Math.Log(1 / GetEuclideanDistance(x1, X2(t)[0], x2, X2(t)[1])) * GetEuclideanDistance(Der1X2(t)[0], 0, Der1X2(t)[1], 0);
+
     }
 
     return s1 / (2 * N) + s2 / (2 * N);
@@ -252,7 +256,8 @@ void Solve(int N1)
     int N = N1;
     double[] H_F_Values = new double [4*N];
     double[,] kernelMatrix = new double [4*N, 4*N];
-    for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 0 : 1; }
+    // for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 0 : 1; }
+    for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 1 : 0; }
 
     for (int i = 0; i < 2*N; i++)
     {
@@ -260,14 +265,20 @@ void Solve(int N1)
         for (int j = 0; j < 2*N; j++)
         {
             double tj = j * Math.PI / N;
-            kernelMatrix[i, j] = K11(ti, tj)/(2*N);
-            kernelMatrix[i, 2*N + j] = K12(ti, tj)/(2*N);
-            kernelMatrix[2*N + i, j] = K21(ti, tj)/(2*N);
-            kernelMatrix[2*N + i, 2*N + j] = K22(ti, tj)/(2*N);
+            // kernelMatrix[i, j] = K11(ti, tj)/(2*N);
+            // kernelMatrix[i, 2*N + j] = K12(ti, tj)/(2*N);
+            // kernelMatrix[2*N + i, j] = K21(ti, tj)/(2*N);
+            // kernelMatrix[2*N + i, 2*N + j] = K22(ti, tj)/(2*N);
+            kernelMatrix[i, j] = H11(ti, tj)/(2*N);
+            kernelMatrix[i, 2*N + j] = H12(ti, tj)/(2*N);
+            kernelMatrix[2*N + i, j] = H21(ti, tj)/(2*N);
+            kernelMatrix[2*N + i, 2*N + j] = H22(ti, tj)/(2*N);
         }
 
-        kernelMatrix[i, i] = kernelMatrix[i, i] - 0.5;
-        kernelMatrix[2*N + i, 2*N + i] = kernelMatrix[2*N + i, 2*N + i] - 0.5;
+        // kernelMatrix[i, i] = kernelMatrix[i, i] - 0.5;
+        // kernelMatrix[2*N + i, 2*N + i] = kernelMatrix[2*N + i, 2*N + i] - 0.5;
+        kernelMatrix[i, i] = kernelMatrix[i, i] + 0.5;
+        kernelMatrix[2*N + i, 2*N + i] = kernelMatrix[2*N + i, 2*N + i] + 0.5;
     }
 
     double[,] kernelMatrixExtended = new double[4*N, 4*N + 1];
@@ -285,16 +296,17 @@ void Solve(int N1)
     Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
     Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
 
-    double[] uOnGamma1 = GetApproximatedUOnGamma1(ans, N);
-    for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
+
+    // double[] uOnGamma1 = GetApproximatedUOnGamma1(ans, N);
+    // for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
 }
 
-// Solve(4);
-// Console.WriteLine();
-// Solve(8);
-// Console.WriteLine();
+Solve(4);
+Console.WriteLine();
+Solve(8);
+Console.WriteLine();
 Solve(16);
 Console.WriteLine();
-// Solve(32);
+Solve(32);
 
 Console.WriteLine("\nEND");
