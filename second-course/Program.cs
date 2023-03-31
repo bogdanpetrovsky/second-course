@@ -8,6 +8,8 @@ double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
 double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
 double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
 double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
+double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
+double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
 // double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
 // double[] X2(double t) { return new [] { 2 * Math.Cos(t), Math.Sin(t) }; }
 // double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
@@ -131,7 +133,6 @@ double H22(double t1, double t2)
            kernelDenominator;
 }
 
-
 double GetEuclideanDistance(double x21, double x11, double x22, double x12)
 {
     return Math.Sqrt(Math.Pow(x21 - x11, 2) + Math.Pow(x22 - x12, 2));
@@ -195,7 +196,7 @@ double[] Gauss (double[,] a, int N) {
  
     for (int i=0; i<m; ++i)
         if (where[i] == -1)
-            return new double[] { };
+            return ans;
     return ans;
 }
 
@@ -251,6 +252,87 @@ double[] GetApproximatedUOnGamma1(double[] uValues, int N)
     return result;
 }
 
+double HWaved(double t1, double t2)
+{
+    if (Math.Abs(t1 - t2) < Eps)
+    {
+        return -1.0 / 6
+               +
+               (Der1X1(t1)[0] * Der3X1(t1)[0] + Der1X1(t2)[1] * Der3X1(t1)[1]) /
+               (3 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2))
+               +
+               Math.Pow(GetEuclideanDistance(Der2X1(t1)[0], 0, Der2X1(t1)[1], 0), 2) /
+               (2 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2))
+               -
+               Math.Pow(Der1X1(t1)[0] * Der2X1(t1)[0] + Der1X1(t2)[1] * Der2X1(t1)[1], 2) /
+               Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 4);
+    }
+    else
+    {
+        double denominator1 = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 4);
+        double numerator1 = (Der1X1(t1)[0] * (X1(t2)[0] - X1(t1)[0]) + Der1X1(t1)[1] * (X1(t2)[1] - X1(t1)[1])) *
+                            (Der1X1(t2)[0] * (X1(t1)[0] - X1(t2)[0]) + Der1X1(t2)[1] * (X1(t1)[1] - X1(t2)[1]));
+        double denominator2 = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
+        double numerator2 = (Der1X1(t1)[0] * Der1X1(t2)[0] + Der1X1(t1)[1] * Der1X1(t2)[1]);
+        
+        double denominator3 = Math.Pow(Math.Sin((t1-t2)/2), 2);
+        return 4 * numerator1 / denominator1 - 2 * numerator2 / denominator2 - 1 / (2 * denominator3);
+    }
+}
+
+double T1J(double t, double tj, double n)
+{
+    double sum = 0;
+    for (int m = 1; m < n-1; m++)
+    {
+        sum += m * Math.Cos(m * (t - tj)) - Math.Cos(n * (t - tj)) / 2;
+    }
+    
+    return -sum / n;
+}
+
+double T2J(double t1, double t2)
+{
+    double kernelNumerator = (X2(t2)[0] - X1(t1)[0]) * VGamma1(t1)[0] + (X2(t2)[1] - X1(t1)[1]) * VGamma1(t1)[1];
+    double kernelDenominator = Math.Pow(GetEuclideanDistance(X1(t1)[0], X2(t2)[0], X1(t1)[1], X2(t2)[1]), 2);
+    
+    return kernelNumerator * GetEuclideanDistance(Der1X2(t2)[0], 0, Der1X2(t2)[1], 0) /
+           kernelDenominator;
+}
+
+double[] GetApproximatedDerUOnGamma1(double[] uValues, int N)
+{
+    double[] result = new double[2*N];
+    
+    for (int k = 0; k < 2*N; k++)
+    {
+        double tk = k * Math.PI / N;
+        double s1 = 0, s2 = 0;
+        for (int i = 0; i < 2*N; i++)
+        {
+            double ti = i * Math.PI / N;
+            s2 = s2 + uValues[i + 2 * N] * T2J(ti, tk);
+
+            double l = 0;
+            if (Math.Abs(ti - tk) < Eps)
+            {
+                l = Math.Log(Math.Pow(GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0), 2));
+            }
+            else
+            {
+                l = Math.Log(Math.Pow(GetEuclideanDistance(X1(tk)[0], X1(ti)[0], X1(tk)[1], X1(ti)[1]), 2) / (4 * Math.Pow(Math.Sin((tk - ti)/2), 2)));
+            }
+
+            s1 = s1 + uValues[i] * T1J(ti, tk, N) + uValues[i] * HWaved(ti, tk);
+        }
+
+        result[k] = s1 + s2 / (2 * N);
+    }
+
+
+    return result;
+}
+
 void Solve(int N1)
 {
     int N = N1;
@@ -296,9 +378,13 @@ void Solve(int N1)
     Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
     Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
 
+    
 
     // double[] uOnGamma1 = GetApproximatedUOnGamma1(ans, N);
     // for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
+    
+    double[] deruOnGamma1 = GetApproximatedDerUOnGamma1(ans, N);
+    for (int j = 0; j < 2 * N; j++) { Console.Write(deruOnGamma1[j].ToString("N", setPrecision) + " "); }
 }
 
 Solve(4);
