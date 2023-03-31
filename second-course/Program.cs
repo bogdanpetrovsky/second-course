@@ -16,6 +16,8 @@ double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) };
 // double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), Math.Cos(t) }; }
 // double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
 // double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -1 * Math.Sin(t) }; }
+// double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
+// double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -1 * Math.Cos(t) }; }
 double Eps = 0.000001;
 
 double[] VGamma2(double t)
@@ -312,17 +314,6 @@ double[] GetApproximatedDerUOnGamma1(double[] uValues, int N)
         {
             double ti = i * Math.PI / N;
             s2 = s2 + uValues[i + 2 * N] * T2J(ti, tk);
-
-            double l = 0;
-            if (Math.Abs(ti - tk) < Eps)
-            {
-                l = Math.Log(Math.Pow(GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0), 2));
-            }
-            else
-            {
-                l = Math.Log(Math.Pow(GetEuclideanDistance(X1(tk)[0], X1(ti)[0], X1(tk)[1], X1(ti)[1]), 2) / (4 * Math.Pow(Math.Sin((tk - ti)/2), 2)));
-            }
-
             s1 = s1 + uValues[i] * T1J(ti, tk, N) + uValues[i] * HWaved(ti, tk);
         }
 
@@ -378,8 +369,6 @@ void Solve(int N1)
     Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
     Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
 
-    
-
     // double[] uOnGamma1 = GetApproximatedUOnGamma1(ans, N);
     // for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
     
@@ -394,5 +383,7 @@ Console.WriteLine();
 Solve(16);
 Console.WriteLine();
 Solve(32);
+Console.WriteLine();
+Solve(64);
 
 Console.WriteLine("\nEND");
