@@ -313,8 +313,8 @@ double[] GetApproximatedDerUOnGamma1(double[] uValues, int N)
         for (int i = 0; i < 2*N; i++)
         {
             double ti = i * Math.PI / N;
-            s2 = s2 + uValues[i + 2 * N] * T2J(ti, tk);
-            s1 = s1 + (uValues[i] * T1J(ti, tk, N) + uValues[i] * HWaved(ti, tk)/(2*N)) /
+            s2 = s2 + uValues[i + 2 * N] * T2J(tk, ti);
+            s1 = s1 + (uValues[i] * T1J(tk, ti, N) + uValues[i] * HWaved(tk, ti)/(2*N)) /
                 GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0);;
         }
 
