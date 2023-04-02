@@ -332,8 +332,14 @@ double F1(double x)
 
 double G2(double x)
 {
-    return 2 * X1(x)[0] * VGamma1(x)[0] - 2 * X2(x)[0] * VGamma2(x)[0] +
-           (2 * X1(x)[1] * VGamma1(x)[1] - 2 * X2(x)[1] * VGamma2(x)[1]);
+    return 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
+}
+
+double du_G1(double x)
+
+{
+    return 2 * X1(x)[0] * VGamma1(x)[0] - 2 * X1(x)[1] * VGamma1(x)[1] ;
+
 }
 
 void Solve(int N1)
@@ -391,7 +397,7 @@ void Solve(int N1)
     double[] deruOnGamma1 = GetApproximatedDerUOnGamma1(ans, N);
     for (int j = 0; j < 2 * N; j++) { Console.Write(deruOnGamma1[j].ToString("N", setPrecision) + " "); }
     Console.WriteLine();
-    for (int j = 0; j < 2 * N; j++) { double ti = j * Math.PI / N; Console.Write(F1(ti).ToString("N", setPrecision) + " "); }
+    for (int j = 0; j < 2 * N; j++) { Console.Write(Math.Abs(deruOnGamma1[j]-du_G1(j*Math.PI / N)).ToString("N", setPrecision) + " "); }
 }
 
 Solve(4);
@@ -400,7 +406,7 @@ Solve(8);
 Console.WriteLine();
 Solve(16);
 Console.WriteLine();
-// Solve(32);
-// Console.WriteLine();
+Solve(32);
+Console.WriteLine();
 
 Console.WriteLine("\nEND");
