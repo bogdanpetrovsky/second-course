@@ -325,13 +325,28 @@ double[] GetApproximatedDerUOnGamma1(double[] uValues, int N)
     return result;
 }
 
+double F1(double x)
+{
+    return Math.Pow(X1(x)[0], 2) - Math.Pow(X1(x)[1], 2);
+}
+
+double G2(double x)
+{
+    return 2 * X1(x)[0] * VGamma1(x)[0] - 2 * X2(x)[0] * VGamma2(x)[0] +
+           (2 * X1(x)[1] * VGamma1(x)[1] - 2 * X2(x)[1] * VGamma2(x)[1]);
+}
+
 void Solve(int N1)
 {
     int N = N1;
     double[] H_F_Values = new double [4*N];
     double[,] kernelMatrix = new double [4*N, 4*N];
     // for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 0 : 1; }
-    for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 1 : 0; }
+    for (var i = 0; i < N * 4; i++)
+    {
+        double ti = i * Math.PI / N;
+        H_F_Values[i] = i < 2*N ? F1(ti) : G2(ti);
+    }
 
     for (int i = 0; i < 2*N; i++)
     {
@@ -375,6 +390,8 @@ void Solve(int N1)
     
     double[] deruOnGamma1 = GetApproximatedDerUOnGamma1(ans, N);
     for (int j = 0; j < 2 * N; j++) { Console.Write(deruOnGamma1[j].ToString("N", setPrecision) + " "); }
+    Console.WriteLine();
+    for (int j = 0; j < 2 * N; j++) { double ti = j * Math.PI / N; Console.Write(F1(ti).ToString("N", setPrecision) + " "); }
 }
 
 Solve(4);
@@ -383,7 +400,7 @@ Solve(8);
 Console.WriteLine();
 Solve(16);
 Console.WriteLine();
-Solve(32);
-Console.WriteLine();
+// Solve(32);
+// Console.WriteLine();
 
 Console.WriteLine("\nEND");
