@@ -282,7 +282,7 @@ double HWaved(double t1, double t2)
     }
 }
 
-double T1J(double t, double tj, double n)
+double T1J(double t, double tj, int n)
 {
     double sum = 0;
     for (int m = 1; m < n; m++)
@@ -345,13 +345,15 @@ double du_G1(double x)
 void Solve(int N1)
 {
     int N = N1;
+    Console.WriteLine("N:" + N);
     double[] H_F_Values = new double [4*N];
     double[,] kernelMatrix = new double [4*N, 4*N];
     // for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 0 : 1; }
-    for (var i = 0; i < N * 4; i++)
+    for (var i = 0; i < N * 2; i++)
     {
         double ti = i * Math.PI / N;
-        H_F_Values[i] = i < 2*N ? F1(ti) : G2(ti);
+        H_F_Values[i] = F1(ti);
+        H_F_Values[i + 2*N] = G2(ti);
     }
 
     for (int i = 0; i < 2*N; i++)
@@ -384,20 +386,18 @@ void Solve(int N1)
     // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }
     
     double[] ans = Gauss(kernelMatrixExtended, 4 * N);
-    // Console.WriteLine("Gauss Values:");
-    // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j].ToString("N", setPrecision) + " "); }
-    // Console.WriteLine("\n");
+    Console.WriteLine("Gauss Values:");
+    for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j].ToString("N", setPrecision) + " "); }
+    Console.WriteLine("\n");
     
-    Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
-    Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
+    // Console.WriteLine("~U(1.5, 0) Value: " + GetApproximatedU(1.5, 0, ans, N).ToString("N", setPrecision) + " ");
+    // Console.WriteLine("~U(0, 0.75) Value: " + GetApproximatedU(0, 0.75, ans, N).ToString("N", setPrecision) + " ");
 
     // double[] uOnGamma1 = GetApproximatedUOnGamma1(ans, N);
     // for (int j = 0; j < 2 * N; j++) { Console.Write(uOnGamma1[j].ToString("N", setPrecision) + " "); }
     
     double[] deruOnGamma1 = GetApproximatedDerUOnGamma1(ans, N);
-    for (int j = 0; j < 2 * N; j++) { Console.Write(deruOnGamma1[j].ToString("N", setPrecision) + " "); }
-    Console.WriteLine();
-    for (int j = 0; j < 2 * N; j++) { Console.Write(Math.Abs(deruOnGamma1[j]-du_G1(j*Math.PI / N)).ToString("N", setPrecision) + " "); }
+    // for (int j = 0; j < 2 * N; j++) { Console.Write(Math.Abs(deruOnGamma1[j]-du_G1(j*Math.PI / N)).ToString("N", setPrecision) + " "); }
 }
 
 Solve(4);
@@ -407,6 +407,8 @@ Console.WriteLine();
 Solve(16);
 Console.WriteLine();
 Solve(32);
+Console.WriteLine();
+Solve(64);
 Console.WriteLine();
 
 Console.WriteLine("\nEND");
