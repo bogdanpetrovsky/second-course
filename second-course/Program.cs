@@ -287,10 +287,10 @@ double T1J(double t, double tj, double n)
     double sum = 0;
     for (int m = 1; m < n; m++)
     {
-        sum += m * Math.Cos(m * (t - tj)) - Math.Cos(n * (t - tj)) / 2;
+        sum += m * Math.Cos(m * (t - tj));
     }
     
-    return -sum / n;
+    return -sum / n - Math.Cos(n * (t - tj)) / 2;
 }
 
 double T2J(double t1, double t2)
