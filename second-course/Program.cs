@@ -2,22 +2,22 @@
 NumberFormatInfo setPrecision = new NumberFormatInfo();    
 setPrecision.NumberDecimalDigits = 8;
 // See https://aka.ms/new-console-template for more information
-double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
-double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
-double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
-double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
-double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
-double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
-double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
-double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
-// double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
-// double[] X2(double t) { return new [] { 2 * Math.Cos(t), Math.Sin(t) }; }
-// double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
-// double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), Math.Cos(t) }; }
-// double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
-// double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -1 * Math.Sin(t) }; }
-// double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
-// double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -1 * Math.Cos(t) }; }
+// double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
+// double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
+// double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
+// double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
+// double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
+// double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
+// double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
+// double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
+double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
+double[] X2(double t) { return new [] { 2 * Math.Cos(t), Math.Sin(t) }; }
+double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
+double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), Math.Cos(t) }; }
+double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
+double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -1 * Math.Sin(t) }; }
+double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
+double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -1 * Math.Cos(t) }; }
 double Eps = 0.000001;
 
 double[] VGamma2(double t)
@@ -285,7 +285,7 @@ double HWaved(double t1, double t2)
 double T1J(double t, double tj, double n)
 {
     double sum = 0;
-    for (int m = 1; m < n-1; m++)
+    for (int m = 1; m < n; m++)
     {
         sum += m * Math.Cos(m * (t - tj)) - Math.Cos(n * (t - tj)) / 2;
     }
@@ -314,7 +314,8 @@ double[] GetApproximatedDerUOnGamma1(double[] uValues, int N)
         {
             double ti = i * Math.PI / N;
             s2 = s2 + uValues[i + 2 * N] * T2J(ti, tk);
-            s1 = s1 + uValues[i] * T1J(ti, tk, N) + uValues[i] * HWaved(ti, tk);
+            s1 = s1 + (uValues[i] * T1J(ti, tk, N) + uValues[i] * HWaved(ti, tk)/(2*N)) /
+                GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0);;
         }
 
         result[k] = s1 + s2 / (2 * N);
@@ -384,6 +385,5 @@ Solve(16);
 Console.WriteLine();
 Solve(32);
 Console.WriteLine();
-Solve(64);
 
 Console.WriteLine("\nEND");
