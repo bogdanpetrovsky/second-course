@@ -19,6 +19,7 @@ public static class FunctionHelper
     public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
     public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
     public static double Eps = 0.000001;
+    public static double ErrorEps = 0.01;
     
     public static double[] VGamma2(double t)
     {
@@ -82,7 +83,7 @@ public static class FunctionHelper
             for (int j=0; j<m; ++j)
                 sum += ans[j] * a[i, j];
             if (Math.Abs(sum - a[i, m]) > Eps)
-                return new double[] { };;
+                return ans;
         }
  
         for (int i=0; i<m; ++i)
@@ -243,9 +244,20 @@ public static class FunctionHelper
     }
 
     public static double du_G1(double x)
-
     {
         return 2 * X1(x)[0] * VGamma1(x)[0] - 2 * X1(x)[1] * VGamma1(x)[1] ;
 
+    }
+    
+    public static double GetMaxError(double[] f1Value, double[] f2Value)
+    {
+        double maxError = 0;
+
+        for (int i = 0; i < f1Value.Length; i++)
+        {
+            maxError = Math.Max(Math.Abs(f1Value[i] - f2Value[i]), maxError);
+        }
+
+        return maxError;
     }
 }

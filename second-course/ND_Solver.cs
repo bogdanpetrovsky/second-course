@@ -53,18 +53,12 @@ public class ND_Solver
 
     public double[] solutionValues = new double[2];
     
-    public double[] Solve(int N1)
+    public double[] Solve(int N1, double[] fValues, double[] gValues)
     {
         int N = N1;
         double[] H_F_Values = new double [4*N];
         double[,] kernelMatrix = new double [4*N, 4*N];
-        // for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? 0 : 1; }
-        for (int i = 0; i < N * 2; i++)
-        {
-            double ti = i * Math.PI / N;
-            H_F_Values[i] = FunctionHelper.F1(ti);
-            H_F_Values[i + 2*N] = FunctionHelper.G2(ti);
-        }
+        for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? fValues[i] : gValues[i - 2*N]; }
 
         for (int i = 0; i < 2*N; i++)
         {
