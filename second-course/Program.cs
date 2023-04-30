@@ -5,9 +5,9 @@ NumberFormatInfo setPrecision = new NumberFormatInfo();
 setPrecision.NumberDecimalDigits = 8;
 // See https://aka.ms/new-console-template for more information
 
-void Solve()
+void Solve(int N1)
 {
-    int N = 32;
+    int N = N1;
     Console.WriteLine("N:" + N);
     double[] exactSolution = new double [N*2];
     
@@ -20,9 +20,8 @@ void Solve()
     {
         double ti = i * Math.PI / N;
         exactSolution[i] = FunctionHelper.F1(ti);
-        f1Values[i] = FunctionHelper.F1(ti);
-        f2Values[i] = FunctionHelper.F1(ti);
-        g1Values[i] = FunctionHelper.G2(ti);
+        g1Values[i] = 0;
+        f2Values[i] = FunctionHelper.F2(ti);
         g2Values[i] = FunctionHelper.G2(ti);
     }
     
@@ -32,19 +31,37 @@ void Solve()
     
     double solutionError = Double.MaxValue;
 
-    while (solutionError > FunctionHelper.ErrorEps)
+    for (int ii = 0; ii < 10; ii++)
     {
-        double[] DN_Ans = dnSolver.Solve(N, f1Values, g2Values);
-        double[] DN_derUOnGamma1 = FunctionHelper.GetApproximatedDerUOnGamma1(DN_Ans, N);
-        g1Values = DN_derUOnGamma1;
-        
-        double[] ND_Ans = ndSolver.Solve(N, f2Values, g1Values);
+        double[] ND_Ans = ndSolver.Solve(N, g1Values, f2Values);
         double[] ND_UOnGamma1 = FunctionHelper.GetApproximatedUOnGamma1(ND_Ans, N);
         f1Values = ND_UOnGamma1;
 
+        double[] DN_Ans = dnSolver.Solve(N, f1Values, g2Values);
+        double[] DN_derUOnGamma1 = FunctionHelper.GetApproximatedDerUOnGamma1(DN_Ans, N);
+        g1Values = DN_derUOnGamma1;
+
+        // for (int j = 0; j < g1Values.Length; j++)
+        // {
+        //     Console.WriteLine(g1Values[j] + " ");
+        // }
         solutionError = FunctionHelper.GetMaxError(f1Values, exactSolution);
         Console.WriteLine(solutionError);
     }
+    
+    // while (solutionError > FunctionHelper.ErrorEps)
+    // {
+    //     double[] DN_Ans = dnSolver.Solve(N, f1Values, g2Values);
+    //     double[] DN_derUOnGamma1 = FunctionHelper.GetApproximatedDerUOnGamma1(DN_Ans, N);
+    //     g1Values = DN_derUOnGamma1;
+    //     
+    //     double[] ND_Ans = ndSolver.Solve(N, f2Values, g1Values);
+    //     double[] ND_UOnGamma1 = FunctionHelper.GetApproximatedUOnGamma1(ND_Ans, N);
+    //     f1Values = ND_UOnGamma1;
+    //
+    //     solutionError = FunctionHelper.GetMaxError(f1Values, exactSolution);
+    //     Console.WriteLine(solutionError);
+    // }
     
     
     
@@ -76,37 +93,37 @@ void Solve()
     // Console.WriteLine("\n");
 }
 
-Solve();
+Solve(4);
 Console.WriteLine();
-// Solve(8);
-// Console.WriteLine();
-// Solve(16);
-// Console.WriteLine();
-// Solve(32);
-// Console.WriteLine();
-// Solve(64);
-// Console.WriteLine();
+Solve(8);
+Console.WriteLine();
+Solve(16);
+Console.WriteLine();
+Solve(32);
+Console.WriteLine();
+Solve(64);
+Console.WriteLine();
 
 Console.WriteLine("\nEND");
 
 public static class FunctionHelper
 {
-    // double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
-    // double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
-    // double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
-    // double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
-    // double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
-    // double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
-    // double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
-    // double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
-    public static double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
-    public static double[] X2(double t) { return new [] { 1.5 * Math.Cos(t), Math.Sin(t) }; }
-    public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
-    public static double[] Der1X2(double t) { return new [] { -1.5 * Math.Sin(t), Math.Cos(t) }; }
-    public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
-    public static double[] Der2X2(double t) { return new [] { -1.5 * Math.Cos(t), -1 * Math.Sin(t) }; }
-    public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
-    public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
+    public static double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
+    public static double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
+    public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
+    public static double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
+    public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
+    public static double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
+    public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
+    public static double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
+    // public static double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
+    // public static double[] X2(double t) { return new [] { 1.5 * Math.Cos(t), Math.Sin(t) }; }
+    // public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
+    // public static double[] Der1X2(double t) { return new [] { -1.5 * Math.Sin(t), Math.Cos(t) }; }
+    // public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
+    // public static double[] Der2X2(double t) { return new [] { -1.5 * Math.Cos(t), -1 * Math.Sin(t) }; }
+    // public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
+    // public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
     public static double Eps = 0.000001;
     public static double ErrorEps = 0.01;
     
@@ -257,7 +274,7 @@ public static class FunctionHelper
         {
             return -1.0 / 6
                    +
-                   (Der1X1(t1)[0] * Der3X1(t1)[0] + Der1X1(t2)[1] * Der3X1(t1)[1]) /
+                   (Der1X1(t1)[0] * Der3X1(t1)[0] + Der1X1(t1)[1] * Der3X1(t1)[1]) /
                    (3 * Math.Pow(GetEuclideanDistance(Der1X1(t1)[0], 0, Der1X1(t1)[1], 0), 2))
                    +
                    Math.Pow(GetEuclideanDistance(Der2X1(t1)[0], 0, Der2X1(t1)[1], 0), 2) /
@@ -270,7 +287,7 @@ public static class FunctionHelper
         {
             double denominator1 = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 4);
             double numerator1 = (Der1X1(t1)[0] * (X1(t2)[0] - X1(t1)[0]) + Der1X1(t1)[1] * (X1(t2)[1] - X1(t1)[1])) *
-                                (Der1X1(t2)[0] * (X1(t1)[0] - X1(t2)[0]) + Der1X1(t2)[1] * (X1(t1)[1] - X1(t2)[1]));
+                                (Der1X1(t2)[0] * (X1(t2)[0] - X1(t1)[0]) + Der1X1(t2)[1] * (X1(t2)[1] - X1(t1)[1]));
             double denominator2 = Math.Pow(GetEuclideanDistance(X1(t1)[0], X1(t2)[0], X1(t1)[1], X1(t2)[1]), 2);
             double numerator2 = (Der1X1(t1)[0] * Der1X1(t2)[0] + Der1X1(t1)[1] * Der1X1(t2)[1]);
             
@@ -311,11 +328,12 @@ public static class FunctionHelper
             {
                 double ti = i * Math.PI / N;
                 s2 = s2 + uValues[i + 2 * N] * T2J(tk, ti);
-                s1 = s1 + (uValues[i] * T1J(tk, ti, N) + uValues[i] * HWaved(tk, ti)/(2*N)) /
-                    GetEuclideanDistance(Der1X1(ti)[0], 0, Der1X1(ti)[1], 0);;
+                s1 = s1 + (uValues[i] * T1J(tk, ti, N) + uValues[i] * HWaved(tk, ti)/(2*N));
             }
-
-            result[k] = s1 + s2 / (2 * N);
+            
+            result[k] = s1/(2 * GetEuclideanDistance(Der1X1(tk)[0], 0, Der1X1(tk)[1], 0)) + s2 / (2 * N) +
+                        uValues[4*N] * (2*X1(tk)[0]/(X1(tk)[0]*X1(tk)[0] + X1(tk)[1]*X1(tk)[1]) * VGamma1(tk)[0] +
+                        2*X1(tk)[1]/(X1(tk)[0]*X1(tk)[0] + X1(tk)[1]*X1(tk)[1]) * VGamma1(tk)[1]);
         }
 
 
@@ -324,12 +342,20 @@ public static class FunctionHelper
 
     public static double F1(double x)
     {
-        return Math.Pow(X1(x)[0], 2) - Math.Pow(X1(x)[1], 2);
+        // return Math.Pow(X1(x)[0], 2) - Math.Pow(X1(x)[1], 2);
+        return 1;
+    }
+    
+    public static double F2(double x)
+    {
+        // return Math.Pow(X2(x)[0], 2) - Math.Pow(X2(x)[1], 2);
+        return 1;
     }
 
     public static double G2(double x)
     {
-        return 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
+        // return 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
+        return 0;
     }
 
     public static double du_G1(double x)
@@ -410,6 +436,7 @@ public class ND_Solver
         double[] H_F_Values = new double [4*N];
         double[,] kernelMatrix = new double [4*N, 4*N];
         for (var i = 0; i < N*4; i++) { H_F_Values[i] = i < 2*N ? fValues[i] : gValues[i - 2*N]; }
+        // Console.WriteLine(H_F_Values[0] + " " +  H_F_Values[H_F_Values.Length - 1]);
 
         for (int i = 0; i < 2*N; i++)
         {
@@ -518,16 +545,32 @@ public class DN_Solver
             kernelMatrix[i, i] += 0.5;
             kernelMatrix[2*N + i, 2*N + i] += 0.5;
         }
-
-        double[,] kernelMatrixExtended = new double[4*N, 4*N + 1];
-        for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N] = H_F_Values[i]; }
-        for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
         
-        // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
+        
+        // todo: optimize
+        double[,] kernelMatrixExtended = new double[4*N+1, 4*N + 2];
+        for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N+1] = H_F_Values[i]; }
+        kernelMatrixExtended[4 * N, 4 * N] = 0;
+        for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
 
-        double[] ans = FunctionHelper.Gauss(kernelMatrixExtended, 4 * N);
+        for (int i = 0; i < 4 * N + 1; i++)
+        {
+            double t =i*Math.PI/N;
+            kernelMatrixExtended[i,4*N] = i < 2 * N ?
+                Math.Log(FunctionHelper.X1(t)[0]*FunctionHelper.X1(t)[0]+FunctionHelper.X1(t)[1]*FunctionHelper.X1(t)[1]) :
+                2*FunctionHelper.X2(t)[0]/(FunctionHelper.X2(t)[0]*FunctionHelper.X2(t)[0] + FunctionHelper.X2(t)[1]*FunctionHelper.X2(t)[1]) * FunctionHelper.VGamma2(t)[0] +
+                    2*FunctionHelper.X2(t)[1]/(FunctionHelper.X2(t)[0]*FunctionHelper.X2(t)[0] + FunctionHelper.X2(t)[1]*FunctionHelper.X2(t)[1]) * FunctionHelper.VGamma2(t)[1];
+            
+            kernelMatrixExtended[4 * N, i] = i < 2 * N ? 1 : 0;
+        }
+        kernelMatrixExtended[4 * N, 4 * N + 1] = 0;
+        
+        
+        // for (int i = 0; i < 4 * N + 1; i++) { for (int j = 0; j < 4 * N + 2; j++) { Console.Write( kernelMatrixExtended[i,j] + " "); } Console.WriteLine(); } Console.WriteLine();
+
+        double[] ans = FunctionHelper.Gauss(kernelMatrixExtended, 4 * N + 1);
         // Console.WriteLine("Gauss Values:");
-        // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j].ToString("N", setPrecision) + " "); }
+        // for (int j = 0; j < 4 * N + 1; j++) { Console.Write(ans[j] + " "); }
         // Console.WriteLine("\n");
 
         
