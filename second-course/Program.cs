@@ -3,7 +3,6 @@ using second_course;
 
 NumberFormatInfo setPrecision = new NumberFormatInfo();    
 setPrecision.NumberDecimalDigits = 8;
-// See https://aka.ms/new-console-template for more information
 
 void Solve(int N1)
 {
@@ -20,6 +19,8 @@ void Solve(int N1)
     {
         double ti = i * Math.PI / N;
         exactSolution[i] = FunctionHelper.F1(ti);
+        f1Values[i] = FunctionHelper.F1(ti);
+
         g1Values[i] = 0;
         f2Values[i] = FunctionHelper.F2(ti);
         g2Values[i] = FunctionHelper.G2(ti);
@@ -36,15 +37,24 @@ void Solve(int N1)
         double[] ND_Ans = ndSolver.Solve(N, g1Values, f2Values);
         double[] ND_UOnGamma1 = FunctionHelper.GetApproximatedUOnGamma1(ND_Ans, N);
         f1Values = ND_UOnGamma1;
+        
+        Console.WriteLine("F1 Values:");
+        for (int j = 0; j < f1Values.Length; j++)
+        {
+            Console.WriteLine(f1Values[j] + " ");
+        }
 
         double[] DN_Ans = dnSolver.Solve(N, f1Values, g2Values);
         double[] DN_derUOnGamma1 = FunctionHelper.GetApproximatedDerUOnGamma1(DN_Ans, N);
         g1Values = DN_derUOnGamma1;
 
-        // for (int j = 0; j < g1Values.Length; j++)
-        // {
-        //     Console.WriteLine(g1Values[j] + " ");
-        // }
+        Console.WriteLine("G1 Values:");
+        for (int j = 0; j < g1Values.Length; j++)
+        {
+            Console.WriteLine(g1Values[j] + " ");
+        }
+        
+        Console.WriteLine("Solution Error:");
         solutionError = FunctionHelper.GetMaxError(f1Values, exactSolution);
         Console.WriteLine(solutionError);
     }
@@ -93,14 +103,14 @@ void Solve(int N1)
     // Console.WriteLine("\n");
 }
 
-Solve(4);
-Console.WriteLine();
-Solve(8);
-Console.WriteLine();
-Solve(16);
-Console.WriteLine();
-Solve(32);
-Console.WriteLine();
+// Solve(4);
+// Console.WriteLine();
+// Solve(8);
+// Console.WriteLine();
+// Solve(16);
+// Console.WriteLine();
+// Solve(32);
+// Console.WriteLine();
 Solve(64);
 Console.WriteLine();
 
@@ -124,7 +134,7 @@ public static class FunctionHelper
     // public static double[] Der2X2(double t) { return new [] { -1.5 * Math.Cos(t), -1 * Math.Sin(t) }; }
     // public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
     // public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
-    public static double Eps = 0.000001;
+    public static double Eps = 1E-16;
     public static double ErrorEps = 0.01;
     
     public static double[] VGamma2(double t)
@@ -458,12 +468,12 @@ public class ND_Solver
         for (int i = 0; i < 4*N; i++) { kernelMatrixExtended[i, 4*N] = H_F_Values[i]; }
         for (int i = 0; i < 4*N; i++) { for (int j = 0; j < 4*N; j++) { kernelMatrixExtended[i, j] = kernelMatrix[i, j]; } }
         
-        // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j].ToString("N", setPrecision) + " "); } Console.WriteLine(); } Console.WriteLine();
+        // for (int i = 0; i < 4 * N; i++) { for (int j = 0; j < 4 * N + 1; j++) { Console.Write( kernelMatrixExtended[i,j]); } Console.WriteLine(); } Console.WriteLine();
 
         double[] ans = FunctionHelper.Gauss(kernelMatrixExtended, 4 * N);
-        // Console.WriteLine("Gauss Values:");
-        // for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
-        // Console.WriteLine("\n");
+        Console.WriteLine("Gauss Values:");
+        for (int j = 0; j < 4 * N; j++) { Console.Write(ans[j] + " "); }
+        Console.WriteLine("\n");
 
         solutionValues = ans;
         return solutionValues;
@@ -569,9 +579,9 @@ public class DN_Solver
         // for (int i = 0; i < 4 * N + 1; i++) { for (int j = 0; j < 4 * N + 2; j++) { Console.Write( kernelMatrixExtended[i,j] + " "); } Console.WriteLine(); } Console.WriteLine();
 
         double[] ans = FunctionHelper.Gauss(kernelMatrixExtended, 4 * N + 1);
-        // Console.WriteLine("Gauss Values:");
-        // for (int j = 0; j < 4 * N + 1; j++) { Console.Write(ans[j] + " "); }
-        // Console.WriteLine("\n");
+        Console.WriteLine("Gauss Values:");
+        for (int j = 0; j < 4 * N + 1; j++) { Console.Write(ans[j] + " "); }
+        Console.WriteLine("\n");
 
         
         solutionValues = ans;
