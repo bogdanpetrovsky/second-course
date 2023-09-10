@@ -22,8 +22,8 @@ void Solve(int N1)
         f1Values[i] = FunctionHelper.F1(ti);
 
         g1Values[i] = 0;
-        f2Values[i] = FunctionHelper.F2(ti);
-        g2Values[i] = FunctionHelper.G2(ti);
+        f2Values[i] = FunctionHelper.F2(ti, false);
+        g2Values[i] = FunctionHelper.G2(ti, false);
     }
     
     // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = FunctionHelper.Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }

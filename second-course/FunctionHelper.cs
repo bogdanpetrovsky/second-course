@@ -236,20 +236,29 @@ public static class FunctionHelper
 
     public static double F1(double x)
     {
+        
         // return Math.Pow(X1(x)[0], 2) - Math.Pow(X1(x)[1], 2);
         return 1;
     }
     
-    public static double F2(double x)
+    public static double F2(double x, bool withError)
     {
-        // return Math.Pow(X2(x)[0], 2) - Math.Pow(X2(x)[1], 2);
-        return 1;
+        // double result = Math.Pow(X2(x)[0], 2) - Math.Pow(X2(x)[1], 2);
+        double result = 1;
+        return result * (withError ? GenerateNoise(result) : 1);
     }
 
-    public static double G2(double x)
+    public static double G2(double x, bool withError)
     {
-        // return 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
-        return 0;
+        // double result = 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
+        double result = 0;
+        return result * (withError ? GenerateNoise(result) : 1);
+    }
+
+    public static double GenerateNoise(double val)
+    {
+        Random rnd = new Random();
+        return val * rnd.Next(-5, 5) / 100;
     }
 
     public static double du_G1(double x)
