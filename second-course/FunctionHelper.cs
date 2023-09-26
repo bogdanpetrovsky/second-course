@@ -2,25 +2,27 @@ namespace second_course;
 
 public static class FunctionHelper
 {
-    public static double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
-    public static double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
-    public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
-    public static double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
-    public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
-    public static double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
-    public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
-    public static double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
-    // public static double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
-    // public static double[] X2(double t) { return new [] { 1.5 * Math.Cos(t), Math.Sin(t) }; }
-    // public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
-    // public static double[] Der1X2(double t) { return new [] { -1.5 * Math.Sin(t), Math.Cos(t) }; }
-    // public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
-    // public static double[] Der2X2(double t) { return new [] { -1.5 * Math.Cos(t), -1 * Math.Sin(t) }; }
-    // public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
-    // public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
+    // public static double[] X1(double t) { return new [] { Math.Cos(t), Math.Sin(t) }; }
+    // public static double[] X2(double t) { return new [] { 2 * Math.Cos(t), 2 * Math.Sin(t) }; }
+    // public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), Math.Cos(t) }; }
+    // public static double[] Der1X2(double t) { return new [] { -2 * Math.Sin(t), 2 * Math.Cos(t) }; }
+    // public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -1 * Math.Sin(t) }; }
+    // public static double[] Der2X2(double t) { return new [] { -2 * Math.Cos(t), -2 * Math.Sin(t) }; }
+    // public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -1 * Math.Cos(t) }; }
+    // public static double[] Der3X2(double t) { return new [] { 2 * Math.Sin(t), -2 * Math.Cos(t) }; }
+    public static double[] X1(double t) { return new [] { Math.Cos(t), 0.5 * Math.Sin(t) }; }
+    public static double[] X2(double t) { return new [] { 1.5 * Math.Cos(t), Math.Sin(t) }; }
+    public static double[] Der1X1(double t) { return new [] { -1 * Math.Sin(t), 0.5 * Math.Cos(t) }; }
+    public static double[] Der1X2(double t) { return new [] { -1.5 * Math.Sin(t), Math.Cos(t) }; }
+    public static double[] Der2X1(double t) { return new [] { -1 * Math.Cos(t), -0.5 * Math.Sin(t) }; }
+    public static double[] Der2X2(double t) { return new [] { -1.5 * Math.Cos(t), -1 * Math.Sin(t) }; }
+    public static double[] Der3X1(double t) { return new [] { Math.Sin(t), -0.5 * Math.Cos(t) }; }
+    public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
     public static double Eps = 1E-16;
     public static double ErrorEps = 0.01;
-    
+    public static double relexationParameter = 0.5;
+
+
     public static double[] VGamma2(double t)
     {
         return new []
@@ -237,21 +239,21 @@ public static class FunctionHelper
     public static double F1(double x)
     {
         
-        // return Math.Pow(X1(x)[0], 2) - Math.Pow(X1(x)[1], 2);
-        return 1;
+        return Math.Pow(X1(x)[0], 2) - Math.Pow(X1(x)[1], 2);
+        // return 1;
     }
     
     public static double F2(double x, bool withError)
     {
-        // double result = Math.Pow(X2(x)[0], 2) - Math.Pow(X2(x)[1], 2);
-        double result = 1;
+        double result = Math.Pow(X2(x)[0], 2) - Math.Pow(X2(x)[1], 2);
+        // double result = 1;
         return result * (withError ? GenerateNoise(result) : 1);
     }
 
     public static double G2(double x, bool withError)
     {
-        // double result = 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
-        double result = 0;
+        double result = 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
+        // double result = 0;
         return result * (withError ? GenerateNoise(result) : 1);
     }
 

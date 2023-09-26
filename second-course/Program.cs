@@ -35,8 +35,20 @@ void Solve(int N1)
     for (int ii = 0; ii < 20; ii++)
     {
         double[] ND_Ans = ndSolver.Solve(N, g1Values, f2Values);
-        double[] ND_UOnGamma1 = FunctionHelper.GetApproximatedUOnGamma1(ND_Ans, N);
-        f1Values = ND_UOnGamma1;
+        double[] ND_UOnGamma1 = FunctionHelper.GetApproximatedUOnGamma1(ND_Ans, N); 
+        if (ii == 0)
+        { 
+            f1Values = ND_UOnGamma1;
+        }
+        else
+        {
+            
+            for (int jj = 0; jj < 2 * N; jj++)
+            {
+                f1Values[jj] = FunctionHelper.relexationParameter * ND_UOnGamma1[jj] + (1 - FunctionHelper.relexationParameter) * f1Values[jj];
+            }
+        }
+        
         
         // Console.WriteLine("F1 Values:");
         // for (int j = 0; j < f1Values.Length; j++)
