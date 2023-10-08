@@ -20,7 +20,8 @@ public static class FunctionHelper
     public static double[] Der3X2(double t) { return new [] { 1.5 * Math.Sin(t), -1 * Math.Cos(t) }; }
     public static double Eps = 1E-16;
     public static double ErrorEps = 0.01;
-    public static double relexationParameter = 0.5;
+    public static double noiseLevel = 0.05;
+    public static double relexationParameter = 1.2;
 
 
     public static double[] VGamma2(double t)
@@ -243,24 +244,38 @@ public static class FunctionHelper
         // return 1;
     }
     
-    public static double F2(double x, bool withError)
+    public static double F2(double x)
     {
         double result = Math.Pow(X2(x)[0], 2) - Math.Pow(X2(x)[1], 2);
         // double result = 1;
-        return result * (withError ? GenerateNoise(result) : 1);
+        return result;
     }
 
-    public static double G2(double x, bool withError)
+    public static double G2(double x)
     {
         double result = 2 * X2(x)[0] * VGamma2(x)[0] - 2 * X2(x)[1] * VGamma2(x)[1];
         // double result = 0;
-        return result * (withError ? GenerateNoise(result) : 1);
+        return result;
     }
 
-    public static double GenerateNoise(double val)
+    public static double[] GenerateNoise(double[] val)
     {
+        double sum = 0;
+        for (int i = 0; i < val.Length; i++)
+        {
+            sum += val[i] * val[i];
+        }
+        
+        double norm = Math.Sqrt(sum/(2*val.Length));
+        double[] noisyVal = new double[val.Length];
         Random rnd = new Random();
-        return val * rnd.Next(-5, 5) / 100;
+        for (int i = 0; i < val.Length; i++)
+        {
+            noisyVal[i] = val[i] + noiseLevel * norm * (2 * rnd.NextDouble() - 1);
+        }
+
+
+        return noisyVal;
     }
 
     public static double du_G1(double x)

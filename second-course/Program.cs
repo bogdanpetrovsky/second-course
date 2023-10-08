@@ -22,9 +22,14 @@ void Solve(int N1)
         f1Values[i] = FunctionHelper.F1(ti);
 
         g1Values[i] = 0;
-        f2Values[i] = FunctionHelper.F2(ti, false);
-        g2Values[i] = FunctionHelper.G2(ti, false);
+        f2Values[i] = FunctionHelper.F2(ti);
+        g2Values[i] = FunctionHelper.G2(ti);
     }
+
+    // f2Values = FunctionHelper.GenerateNoise(f2Values);
+    // Console.WriteLine(g2Values[0] + " " + g2Values[1] + " '" + g2Values[2]);
+    g2Values = FunctionHelper.GenerateNoise(g2Values);
+    // Console.WriteLine(g2Values[0] + " " + g2Values[1] + " '" + g2Values[2]);
     
     // double[,] testCase = new double[3, 4] { { 1, 9, -5, -32 }, { -3, -5, -5, -10 }, { -2, -7, 1, 13 } }; double[] ans1 = FunctionHelper.Gauss(testCase, 3); for (int j = 0; j < 3; j++) { Console.Write(ans1[j] + " "); }
     ND_Solver ndSolver = new ND_Solver();
@@ -32,7 +37,7 @@ void Solve(int N1)
     
     double solutionError = Double.MaxValue;
 
-    for (int ii = 0; ii < 20; ii++)
+    for (int ii = 0; ii < 10; ii++)
     {
         double[] ND_Ans = ndSolver.Solve(N, g1Values, f2Values);
         double[] ND_UOnGamma1 = FunctionHelper.GetApproximatedUOnGamma1(ND_Ans, N); 
@@ -42,7 +47,6 @@ void Solve(int N1)
         }
         else
         {
-            
             for (int jj = 0; jj < 2 * N; jj++)
             {
                 f1Values[jj] = FunctionHelper.relexationParameter * ND_UOnGamma1[jj] + (1 - FunctionHelper.relexationParameter) * f1Values[jj];
